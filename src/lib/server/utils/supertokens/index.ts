@@ -1,3 +1,4 @@
+import { env } from "$env/dynamic/private";
 import type { HTTPMethod } from "supertokens-node/lib/build/types";
 import EmailPassword from "supertokens-node/recipe/emailpassword";
 import Session from "supertokens-node/recipe/session";
@@ -84,7 +85,7 @@ export const SuperTokensHelpers = {
     }
 
     const passwordResetPath = commonRoutes.resetPassword;
-    const passwordResetLink = `${process.env.DOMAIN}${passwordResetPath}?token=${tokenResult.token}&rid=${recipeId}`;
+    const passwordResetLink = `${env.DOMAIN}${passwordResetPath}?token=${tokenResult.token}&rid=${recipeId}`;
     await EmailPassword.sendEmail({ type: "PASSWORD_RESET", user, passwordResetLink });
   },
 
