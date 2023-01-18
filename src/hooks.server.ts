@@ -9,14 +9,14 @@ import { SuperTokensData } from "$lib/server/utils/supertokens";
 /* -------------------- Super Tokens -------------------- */
 SuperTokens.init({
   supertokens: {
-    connectionURI: env.SUPERTOKENS_CONNECTION_URI,
-    apiKey: env.SUPERTOKENS_API_KEY,
+    connectionURI: env.SUPERTOKENS_CONNECTION_URI as string,
+    apiKey: env.SUPERTOKENS_API_KEY as string,
   },
   appInfo: {
     appName: "Testing Svelte Kit with Custom Backend",
-    websiteDomain: env.SUPERTOKENS_WEBSITE_DOMAIN,
-    apiDomain: env.SUPERTOKENS_API_DOMAIN,
-    apiBasePath: env.SUPERTOKENS_API_BASE_PATH,
+    websiteDomain: env.SUPERTOKENS_WEBSITE_DOMAIN as string,
+    apiDomain: env.SUPERTOKENS_API_DOMAIN as string,
+    apiBasePath: env.SUPERTOKENS_API_BASE_PATH as string,
   },
   recipeList: [
     EmailPassword.init(), // Initializes signin / signup features
