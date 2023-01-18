@@ -1,2 +1,3 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<div style="font-family: system-ui, sans-serif; line-height: 1.4">
+  <h1 style="text-align: center">Hello! This page is publicly accessible to anyone and everyone!</h1>
+</div>
