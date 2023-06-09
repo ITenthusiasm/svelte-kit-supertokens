@@ -1,6 +1,6 @@
 import { fail, redirect } from "@sveltejs/kit";
 import type { PageServerLoad, Actions } from "./$types";
-import { SuperTokensHelpers } from "$lib/server/utils/supertokens";
+import SuperTokensHelpers from "$lib/server/utils/supertokens";
 import { validateEmail, validatePassword } from "$lib/utils/validation";
 import { commonRoutes } from "$lib/utils/constants";
 

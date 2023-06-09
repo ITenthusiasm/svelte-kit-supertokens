@@ -13,7 +13,7 @@
     "format": "prettier --plugin-search-dir . --write ."
   },
   "dependencies": {
-    "supertokens-node": "^12.1.6"
+    "supertokens-node": "^14.1.1"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^2.1.0",

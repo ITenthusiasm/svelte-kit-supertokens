@@ -1,10 +1,11 @@
 import type { Handle } from "@sveltejs/kit";
-import { env } from "$env/dynamic/private";
 import SuperTokens from "supertokens-node";
-import type { HTTPMethod } from "supertokens-node/lib/build/types";
 import Session from "supertokens-node/recipe/session";
 import EmailPassword from "supertokens-node/recipe/emailpassword";
-import { SuperTokensData } from "$lib/server/utils/supertokens";
+import SuperTokensError from "supertokens-node/lib/build/error";
+import { env } from "$env/dynamic/private";
+import { authCookieNames, createHeadersFromTokens } from "$lib/server/utils/supertokens/cookieHelpers";
+import { commonRoutes } from "$lib/utils/constants";
 
 /* -------------------- Super Tokens -------------------- */
 SuperTokens.init({
@@ -25,32 +26,36 @@ SuperTokens.init({
 });
 
 /* -------------------- Svelte Kit -------------------- */
+// TODO: Use `commonRoutes` instead of raw strings for safety (where possible).
 const publicPages = ["/", "/login", "/reset-password", "/auth/session/refresh", "/api/email-exists"] as const;
 
 export const handle = (async ({ event, resolve }) => {
   try {
-    const { headers, method } = event.request;
-    const input = new SuperTokensData.Input({ headers: new Map(headers), method: method.toLowerCase() as HTTPMethod });
-    const output = new SuperTokensData.Output();
-
-    const session = await Session.getSession(input, output);
+    const accessToken = event.cookies.get(authCookieNames.access) ?? "";
+    const antiCsrfToken = event.cookies.get(authCookieNames.csrf);
+    const session = await Session.getSessionWithoutRequestResponse(accessToken, antiCsrfToken);
     const userId = session.getUserId();
 
     event.locals.user = { id: userId };
     return resolve(event);
   } catch (error) {
-    if (publicPages.includes(event.url.pathname as typeof publicPages[number])) {
+    if (!SuperTokensError.isErrorFromSuperTokens(error)) {
+      return new Response("An unexpected error occurred", { status: 500 });
+    }
+
+    if (publicPages.includes(event.url.pathname as (typeof publicPages)[number])) {
       event.locals.user = {};
       return resolve(event);
     }
 
-    const { type: errorType } = error as { type: "TRY_REFRESH_TOKEN" | "UNAUTHORISED" };
     const { url } = event;
-
-    const basePath = errorType === "UNAUTHORISED" ? "/login" : "/auth/session/refresh";
+    const basePath = error.type === Session.Error.TRY_REFRESH_TOKEN ? commonRoutes.refreshSession : commonRoutes.login;
     const returnUrl = encodeURI(`${url.pathname}${url.search}`);
     const redirectUrl = `${basePath}?returnUrl=${returnUrl}`;
 
-    return new Response(null, { status: 302, headers: { Location: redirectUrl } });
+    // Redirect the user to the proper auth page. Delete their tokens if they don't need to attempt a token refresh.
+    const headers = Session.Error.TRY_REFRESH_TOKEN ? new Headers() : createHeadersFromTokens({});
+    headers.append("Location", redirectUrl);
+    return new Response(null, { status: 302, headers });
   }
 }) satisfies Handle;

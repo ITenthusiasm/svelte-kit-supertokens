@@ -1,6 +1,7 @@
 import { fail, redirect } from "@sveltejs/kit";
 import type { PageServerLoad, Actions } from "./$types";
-import { SuperTokensHelpers, extractCookieData } from "$lib/server/utils/supertokens";
+import SuperTokensHelpers from "$lib/server/utils/supertokens";
+import { authCookieNames, createCookieSettings } from "$lib/server/utils/supertokens/cookieHelpers";
 import { validateEmail, validatePassword } from "$lib/utils/validation";
 
 export const load = (({ locals, url }) => {
@@ -33,7 +34,7 @@ export const actions: Actions = {
 
     // Attempt Sign In / Sign Up
     const normalizedMode = mode === "signup" ? "signup" : "signin";
-    const { status, cookies, responseHeaders } = await SuperTokensHelpers[normalizedMode](email, password);
+    const { status, tokens } = await SuperTokensHelpers[normalizedMode](email, password);
 
     // Auth failed
     if (status === "WRONG_CREDENTIALS_ERROR") {
@@ -44,18 +45,12 @@ export const actions: Actions = {
       return fail(400, { errors: { email: "This email already exists. Please sign in instead." } as ActionData });
     }
 
-    // Auth succeeded
-    responseHeaders.forEach((value, name) => {
-      if (typeof value === "string") event.setHeaders({ [name]: value });
-      // TODO: Svelte Kit doesn't support setting mulptile headers yet. https://github.com/sveltejs/kit/issues/8555.
-      else event.setHeaders({ [name]: value.join(", ") });
-    });
+    const cookieSettings = createCookieSettings();
+    const refreshCookieSettings = createCookieSettings("refresh");
 
-    cookies.forEach((cookieString) => {
-      const { name, value, options } = extractCookieData(cookieString);
-      event.cookies.set(name, value, options);
-    });
-
+    event.cookies.set(authCookieNames.access, tokens.accessToken, cookieSettings);
+    event.cookies.set(authCookieNames.refresh, tokens.refreshToken as string, refreshCookieSettings);
+    if (tokens.antiCsrfToken) event.cookies.set(authCookieNames.csrf, tokens.antiCsrfToken, cookieSettings);
     throw redirect(302, new URL(event.request.url).searchParams.get("returnUrl") || "/");
   },
 };

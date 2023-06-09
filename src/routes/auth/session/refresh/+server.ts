@@ -1,18 +1,14 @@
 import type { RequestHandler } from "./$types";
-import { SuperTokensHelpers, setCookiesFromMap, setHeadersFromMap } from "$lib/server/utils/supertokens";
+import SuperTokensHelpers from "$lib/server/utils/supertokens";
+import { authCookieNames, createHeadersFromTokens } from "$lib/server/utils/supertokens/cookieHelpers";
 import { commonRoutes } from "$lib/utils/constants";
 
-// TODO: Do we need to handle error cases?
-export const GET = (async ({ request }) => {
-  try {
-    const { cookies, responseHeaders } = await SuperTokensHelpers.refreshToken(request.headers);
+export const GET = (async ({ cookies, url }) => {
+  const refreshToken = cookies.get(authCookieNames.refresh) ?? "";
+  const antiCsrfToken = cookies.get(authCookieNames.csrf);
+  const newTokens = await SuperTokensHelpers.refreshToken({ refreshToken, antiCsrfToken });
 
-    const headers = new Headers({ Location: new URL(request.url).searchParams.get("returnUrl") || "/" });
-    cookies.forEach(setCookiesFromMap(headers));
-    responseHeaders.forEach(setHeadersFromMap(headers));
-    return new Response(null, { status: 302, statusText: "OK", headers });
-  } catch (error) {
-    // TODO: Are there better ways to handle error cases?
-    return new Response(null, { status: 302, statusText: "OK", headers: { Location: commonRoutes.login } });
-  }
+  const headers = createHeadersFromTokens(newTokens);
+  headers.append("Location", newTokens.accessToken ? url.searchParams.get("returnUrl") || "/" : commonRoutes.login);
+  return new Response(null, { status: 302, headers: headers });
 }) satisfies RequestHandler;
