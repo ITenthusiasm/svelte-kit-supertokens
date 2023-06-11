@@ -27,7 +27,7 @@ SuperTokens.init({
 
 /* -------------------- Svelte Kit -------------------- */
 // TODO: Use `commonRoutes` instead of raw strings for safety (where possible).
-const publicPages = ["/", "/login", "/reset-password", "/auth/session/refresh", "/api/email-exists"] as const;
+const publicPages = ["/", "/login", "/reset-password", "/api/email-exists"] as const;
 
 export const handle = (async ({ event, resolve }) => {
   try {
@@ -43,7 +43,11 @@ export const handle = (async ({ event, resolve }) => {
       return new Response("An unexpected error occurred", { status: 500 });
     }
 
-    if (publicPages.includes(event.url.pathname as (typeof publicPages)[number])) {
+    const requestAllowed =
+      publicPages.includes(event.url.pathname as (typeof publicPages)[number]) ||
+      (error.type === Session.Error.TRY_REFRESH_TOKEN && event.url.pathname === commonRoutes.refreshSession);
+
+    if (requestAllowed) {
       event.locals.user = {};
       return resolve(event);
     }
@@ -54,7 +58,7 @@ export const handle = (async ({ event, resolve }) => {
     const redirectUrl = `${basePath}?returnUrl=${returnUrl}`;
 
     // Redirect the user to the proper auth page. Delete their tokens if they don't need to attempt a token refresh.
-    const headers = Session.Error.TRY_REFRESH_TOKEN ? new Headers() : createHeadersFromTokens({});
+    const headers = error.type === Session.Error.TRY_REFRESH_TOKEN ? new Headers() : createHeadersFromTokens({});
     headers.append("Location", redirectUrl);
     return new Response(null, { status: 302, headers });
   }

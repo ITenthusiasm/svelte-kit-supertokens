@@ -17,8 +17,6 @@ Start the dev server by running `npm run dev`. **Remember to add your own `.env`
 - `SUPERTOKENS_API_DOMAIN` (e.g., `http://localhost:5173`)
 - `SUPERTOKENS_API_BASE_PATH` (e.g., `/auth`)
 
-## Test Cases
-
 ## Frequently Asked Questions
 
 ### Why Aren't You Using `supertokens-website` or `supertokens-web-js`?
