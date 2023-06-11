@@ -4,9 +4,9 @@
 
     <h2>
       {#if data.mode === "signin"}
-        Not registered yet? <a href="login?mode=signup">Sign Up</a>
+        Not registered yet? <a href={`${commonRoutes.login}?mode=signup`}>Sign Up</a>
       {:else}
-        Already have an account? <a href="/login">Sign In</a>
+        Already have an account? <a href={commonRoutes.login}>Sign In</a>
       {/if}
     </h2>
 
