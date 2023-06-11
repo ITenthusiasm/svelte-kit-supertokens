@@ -34,7 +34,7 @@ These are the test cases used to make sure that the SuperTokens authentication f
 
 ## Authenticated Users
 
-- [ ] Authenticated users are allowed to visit (or make POST requests to) authenticated routes.
+- [x] Authenticated users are allowed to visit (or make POST requests to) authenticated routes.
 - [x] Authenticated users _cannot_ visit the `/login` page (because they're already logged in). They will simply be redirected to the home page.
 - [x] Authenticated users _cannot_ visit the `/reset-password` page (because they've already proved that they know their password). They will simply be redirected to the home page.
 
@@ -58,8 +58,8 @@ These are the test cases used to make sure that the SuperTokens authentication f
 
 - [x] If an _authenticated_ user visits an authenticated route with an _expired_ **access** token, they will be redirected to the `/auth/session/refresh` route. (See [Session Refreshing](#session-refreshing) for what happens during that route visit.)
   - [x] **If session refreshing is successful**, the authenticated user will be returned to the page that they were trying to visit (instead of the home page).
-- [ ] If an _authenticated_ user attempts to submit a form to an authenticated route with an _expired_ **access** token, they will be redirected to the `/auth/session/refresh` route. (See [Session Refreshing](#session-refreshing) for what happens during that route visit.)
-  - [ ] **If session refreshing is successful**, the user's form submission will _continue_ on the page that they were previously on.
+- [x] If an _authenticated_ user attempts to submit a form to an authenticated route with an _expired_ **access** token, they will be redirected to the `/auth/session/refresh` route. (See [Session Refreshing](#session-refreshing) for what happens during that route visit.)
+  - [x] **If session refreshing is successful**, the user's form submission will _continue_ on the page that they were previously on.
 
 ## Miscellaneous Auth Requirements
 

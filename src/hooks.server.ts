@@ -43,9 +43,11 @@ export const handle = (async ({ event, resolve }) => {
       return new Response("An unexpected error occurred", { status: 500 });
     }
 
+    const userNeedsSessionRefresh = error.type === Session.Error.TRY_REFRESH_TOKEN;
+
     const requestAllowed =
       publicPages.includes(event.url.pathname as (typeof publicPages)[number]) ||
-      (error.type === Session.Error.TRY_REFRESH_TOKEN && event.url.pathname === commonRoutes.refreshSession);
+      (userNeedsSessionRefresh && event.url.pathname === commonRoutes.refreshSession);
 
     if (requestAllowed) {
       event.locals.user = {};
@@ -53,13 +55,13 @@ export const handle = (async ({ event, resolve }) => {
     }
 
     const { url } = event;
-    const basePath = error.type === Session.Error.TRY_REFRESH_TOKEN ? commonRoutes.refreshSession : commonRoutes.login;
+    const basePath = userNeedsSessionRefresh ? commonRoutes.refreshSession : commonRoutes.login;
     const returnUrl = encodeURI(`${url.pathname}${url.search}`);
     const redirectUrl = `${basePath}?returnUrl=${returnUrl}`;
 
     // Redirect the user to the proper auth page. Delete their tokens if they don't need to attempt a token refresh.
-    const headers = error.type === Session.Error.TRY_REFRESH_TOKEN ? new Headers() : createHeadersFromTokens({});
+    const headers = userNeedsSessionRefresh ? new Headers() : createHeadersFromTokens({});
     headers.append("Location", redirectUrl);
-    return new Response(null, { status: 302, headers });
+    return new Response(null, { status: userNeedsSessionRefresh ? 307 : 302, headers });
   }
 }) satisfies Handle;
