@@ -26,8 +26,7 @@ SuperTokens.init({
 });
 
 /* -------------------- Svelte Kit -------------------- */
-// TODO: Use `commonRoutes` instead of raw strings for safety (where possible).
-const publicPages = ["/", "/login", "/reset-password", "/api/email-exists"] as const;
+const publicPages = ["/", commonRoutes.login, commonRoutes.resetPassword, commonRoutes.emailExists] as const;
 
 export const handle = (async ({ event, resolve }) => {
   try {
