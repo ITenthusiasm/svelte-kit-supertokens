@@ -103,3 +103,7 @@ This is pretty similar to the approach for [Reusing Old Tokens after a Logout](#
 ### Simulating an Action Requiring Authentication with a Missing Access Token and a Valid Refresh Token
 
 Login to start a new user session. Next, delete the access token from the browser using the developer tools. Finally, attempt the action that requires authentication. The action should fail, the auth cookies should be cleared, and the user should be redirected to the `/login` page.
+
+### Automated Session Refreshing during Form Submissions
+
+The form on the `/private` page was provided exactly for this test case. Simply use that.
