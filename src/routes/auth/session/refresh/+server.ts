@@ -9,7 +9,7 @@ export const GET = (async ({ cookies, url }) => {
   const newTokens = await SuperTokensHelpers.refreshToken({ refreshToken, antiCsrfToken });
 
   const headers = createHeadersFromTokens(newTokens);
-  headers.append("Location", newTokens.accessToken ? url.searchParams.get("returnUrl") || "/" : commonRoutes.login);
+  headers.set("Location", newTokens.accessToken ? url.searchParams.get("returnUrl") || "/" : commonRoutes.login);
   return new Response(null, { status: 307, headers: headers });
 }) satisfies RequestHandler;
 

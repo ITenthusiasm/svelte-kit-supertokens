@@ -9,6 +9,6 @@ export const GET = (async ({ cookies }) => {
   await SuperTokensHelpers.logout({ accessToken, antiCsrfToken });
 
   const headers = createHeadersFromTokens({});
-  headers.append("Location", commonRoutes.login);
+  headers.set("Location", commonRoutes.login);
   return new Response(null, { status: 302, statusText: "OK", headers });
 }) satisfies RequestHandler;
