@@ -26,7 +26,7 @@ type ActionData = {
 
 export const actions: Actions = {
   async default(event) {
-    if (event.locals.user.id) return redirect(302, "/");
+    if (event.locals.user.id) throw redirect(302, "/");
 
     const formData = await event.request.formData().then(Object.fromEntries);
     const { mode } = formData;

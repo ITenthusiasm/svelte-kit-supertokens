@@ -16,6 +16,8 @@ type ActionData = { banner?: string | null; email?: string | null; password?: st
 
 export const actions: Actions = {
   async default(event) {
+    if (event.locals.user.id) throw redirect(302, "/");
+
     // Form Data
     const formData = await event.request.formData().then(Object.fromEntries);
     const { email, password, mode } = formData;
