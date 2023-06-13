@@ -5,7 +5,7 @@ import { validateEmail, validatePassword } from "$lib/utils/validation";
 import { commonRoutes } from "$lib/utils/constants";
 
 export const load = (({ locals, url }) => {
-  if (locals.user.id) throw redirect(302, "/");
+  if (locals.user.id) throw redirect(303, "/");
 
   const token = url.searchParams.get("token");
   let mode: "request" | "emailed" | "attempt" | "success";
@@ -26,7 +26,7 @@ type ActionData = {
 
 export const actions: Actions = {
   async default(event) {
-    if (event.locals.user.id) throw redirect(302, "/");
+    if (event.locals.user.id) throw redirect(303, "/");
 
     const formData = await event.request.formData().then(Object.fromEntries);
     const { mode } = formData;
@@ -40,7 +40,7 @@ export const actions: Actions = {
 
       // Email a "reset password" link (or fail silently for invalid users/emails)
       await SuperTokensHelpers.sendPasswordResetEmail(email);
-      throw redirect(302, `${commonRoutes.resetPassword}?mode=emailed`);
+      throw redirect(303, `${commonRoutes.resetPassword}?mode=emailed`);
     }
 
     // Reset user's password
@@ -69,7 +69,7 @@ export const actions: Actions = {
       }
 
       // Password reset succeeded
-      throw redirect(302, `${commonRoutes.resetPassword}?mode=success`);
+      throw redirect(303, `${commonRoutes.resetPassword}?mode=success`);
     }
 
     // Fallthrough

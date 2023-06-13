@@ -5,7 +5,7 @@ import { authCookieNames, createCookieSettings } from "$lib/server/utils/superto
 import { validateEmail, validatePassword } from "$lib/utils/validation";
 
 export const load = (({ locals, url }) => {
-  if (locals.user.id) throw redirect(302, "/");
+  if (locals.user.id) throw redirect(303, "/");
 
   const loginMode = url.searchParams.get("mode");
   const mode = loginMode === "signup" ? "signup" : "signin";
@@ -16,7 +16,7 @@ type ActionData = { banner?: string | null; email?: string | null; password?: st
 
 export const actions: Actions = {
   async default(event) {
-    if (event.locals.user.id) throw redirect(302, "/");
+    if (event.locals.user.id) throw redirect(303, "/");
 
     // Form Data
     const formData = await event.request.formData().then(Object.fromEntries);
@@ -53,6 +53,6 @@ export const actions: Actions = {
     event.cookies.set(authCookieNames.access, tokens.accessToken, cookieSettings);
     event.cookies.set(authCookieNames.refresh, tokens.refreshToken as string, refreshCookieSettings);
     if (tokens.antiCsrfToken) event.cookies.set(authCookieNames.csrf, tokens.antiCsrfToken, cookieSettings);
-    throw redirect(302, new URL(event.request.url).searchParams.get("returnUrl") || "/");
+    throw redirect(303, new URL(event.request.url).searchParams.get("returnUrl") || "/");
   },
 };

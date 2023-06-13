@@ -61,6 +61,6 @@ export const handle = (async ({ event, resolve }) => {
     // Redirect the user to the proper auth page. Delete their tokens if they don't need to attempt a token refresh.
     const headers = userNeedsSessionRefresh ? new Headers() : createHeadersFromTokens({});
     headers.set("Location", redirectUrl);
-    return new Response(null, { status: userNeedsSessionRefresh ? 307 : 302, headers });
+    return new Response(null, { status: userNeedsSessionRefresh ? 307 : 303, headers });
   }
 }) satisfies Handle;

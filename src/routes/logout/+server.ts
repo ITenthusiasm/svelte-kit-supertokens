@@ -10,5 +10,5 @@ export const GET = (async ({ cookies }) => {
 
   const headers = createHeadersFromTokens({});
   headers.set("Location", commonRoutes.login);
-  return new Response(null, { status: 302, statusText: "OK", headers });
+  return new Response(null, { status: 303, statusText: "OK", headers });
 }) satisfies RequestHandler;
