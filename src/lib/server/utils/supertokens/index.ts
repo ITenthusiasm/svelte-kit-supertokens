@@ -1,6 +1,5 @@
 import EmailPassword from "supertokens-node/recipe/emailpassword";
 import Session from "supertokens-node/recipe/session";
-import SuperTokensError from "supertokens-node/lib/build/error";
 import { env } from "$env/dynamic/private";
 import { commonRoutes } from "$lib/utils/constants";
 import type { Tokens } from "$lib/server/utils/supertokens/cookieHelpers";
@@ -53,7 +52,7 @@ const SuperTokensHelpers = {
       const session = await Session.refreshSessionWithoutRequestResponse(refreshToken, undefined, antiCsrfToken);
       return session.getAllSessionTokensDangerously();
     } catch (error) {
-      if (!SuperTokensError.isErrorFromSuperTokens(error)) throw error;
+      if (!Session.Error.isErrorFromSuperTokens(error)) throw error;
       if (error.payload.sessionHandle) Session.revokeSession(error.payload.sessionHandle);
       return {};
     }

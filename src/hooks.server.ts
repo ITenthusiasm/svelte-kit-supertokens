@@ -2,7 +2,6 @@ import type { Handle } from "@sveltejs/kit";
 import SuperTokens from "supertokens-node";
 import Session from "supertokens-node/recipe/session";
 import EmailPassword from "supertokens-node/recipe/emailpassword";
-import SuperTokensError from "supertokens-node/lib/build/error";
 import { env } from "$env/dynamic/private";
 import { authCookieNames, createHeadersFromTokens } from "$lib/server/utils/supertokens/cookieHelpers";
 import { commonRoutes } from "$lib/utils/constants";
@@ -38,7 +37,7 @@ export const handle = (async ({ event, resolve }) => {
     event.locals.user = { id: userId };
     return resolve(event);
   } catch (error) {
-    if (!SuperTokensError.isErrorFromSuperTokens(error)) {
+    if (!Session.Error.isErrorFromSuperTokens(error)) {
       return new Response("An unexpected error occurred", { status: 500 });
     }
 
