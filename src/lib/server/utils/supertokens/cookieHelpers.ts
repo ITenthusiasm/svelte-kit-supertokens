@@ -4,7 +4,7 @@ import { serialize } from "cookie";
 import { env } from "$env/dynamic/private";
 import { commonRoutes } from "$lib/utils/constants";
 
-type CookieSettings = Omit<CookieSerializeOptions, "encode">;
+type CookieSettings = Omit<CookieSerializeOptions, "encode"> & { path: string };
 
 export type Tokens = Pick<
   ReturnType<SessionContainerInterface["getAllSessionTokensDangerously"]>,
@@ -20,7 +20,7 @@ const commonCookieSettings = Object.freeze({
   secure: env.SUPERTOKENS_WEBSITE_DOMAIN.startsWith("https"),
   sameSite: "strict",
   priority: "high",
-} as const satisfies CookieSettings);
+} as const satisfies Omit<CookieSettings, "path">);
 
 /**
  * Generates the [settings](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#attributes)
