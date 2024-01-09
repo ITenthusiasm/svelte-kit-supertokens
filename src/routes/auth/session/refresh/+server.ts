@@ -10,7 +10,7 @@ export const GET = (async ({ cookies, url }) => {
 
   const headers = createHeadersFromTokens(newTokens);
   headers.set("Location", newTokens.accessToken ? url.searchParams.get("returnUrl") || "/" : commonRoutes.login);
-  return new Response(null, { status: 307, headers: headers });
+  return new Response(null, { status: newTokens.accessToken ? 307 : 303, headers: headers });
 }) satisfies RequestHandler;
 
 export const POST = GET;
