@@ -105,7 +105,7 @@
   /** @param {HTMLInputElement} field */
   const required = (field) => `${field.labels?.[0].textContent} is required`;
 
-  /** @param {SubmitEvent} event*/
+  /** @param {SubmitEvent} event */
   const handleSubmit = (event) => (validateFields() ? undefined : event.preventDefault());
 
   $: if (formElement) {
