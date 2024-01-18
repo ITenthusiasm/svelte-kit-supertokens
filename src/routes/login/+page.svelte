@@ -1,5 +1,5 @@
 <main>
-  <form method="POST" use:enhance>
+  <form method="POST" bind:this={formElement} use:enhance use:autoObserve>
     <h1>{`Sign ${data.mode === "signin" ? "In" : "Up"}`}</h1>
 
     <h2>
@@ -21,13 +21,22 @@
       id="email"
       name="email"
       placeholder="Email Address"
-      type="email"
       aria-invalid={!!form?.errors.email}
-      aria-errormessage="email-error"
+      aria-describedby="email-error"
+      {...configure("email", {
+        required,
+        type: { value: "email", message: "Email is invalid" },
+        async validate({ value }) {
+          // Check email's existence during `signup`s
+          if (data.mode !== "signup") return;
+
+          const response = await fetch(`/api/email-exists?email=${value}`);
+          const emailExists = await response.json().then(/** @param {boolean} body */ (body) => body);
+          if (emailExists) return "This email already exists. Please sign in instead.";
+        },
+      })}
     />
-    {#if !!form?.errors.email}
-      <div id="email-error" role="alert">{form.errors.email}</div>
-    {/if}
+    <div id="email-error" role="alert">{form?.errors.email ?? ""}</div>
 
     <label for="password">Password</label>
     <input
@@ -36,11 +45,19 @@
       placeholder="Password"
       type="password"
       aria-invalid={!!form?.errors.password}
-      aria-errormessage="password-error"
+      aria-describedby="password-error"
+      {...configure("password", {
+        required,
+        pattern:
+          data.mode === "signin"
+            ? undefined
+            : {
+                value: "(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}",
+                message: "Password must contain at least 8 characters, including a number",
+              },
+      })}
     />
-    {#if !!form?.errors.password}
-      <div id="password-error" role="alert">{form.errors.password}</div>
-    {/if}
+    <div id="password-error" role="alert">{form?.errors.password ?? ""}</div>
 
     <input name="mode" type="hidden" value={data.mode} />
     <button type="submit">{`Sign ${data.mode === "signin" ? "In" : "Up"}`}</button>
@@ -51,14 +68,31 @@
   </form>
 </main>
 
-<script lang="ts">
-  import type { PageData, ActionData } from "./$types";
+<script>
   import { enhance } from "$app/forms";
+  import { createFormValidityObserver } from "@form-observer/svelte";
   import { commonRoutes } from "$lib/utils/constants";
   import "$lib/stylesheets/auth-form.scss";
 
-  export let data: PageData;
-  export let form: ActionData;
+  /** @type {import("./$types.d.ts").PageData} */ export let data;
+  /** @type {import("./$types.d.ts").ActionData} */ export let form;
+  /** @type {HTMLFormElement} */ let formElement;
+
+  // Manage form errors.
+  const { autoObserve, configure, setFieldError, clearFieldError } = createFormValidityObserver("focusout");
+
+  /** @param {HTMLInputElement} field */
+  const required = (field) => `${field.labels?.[0].textContent} is required`;
+
+  $: if (formElement) {
+    Array.prototype.forEach.call(
+      formElement.elements,
+      /** @param {HTMLInputElement} field */ (field) => {
+        const message = form?.errors?.[/** @type {keyof typeof form.errors} */ (field.name)];
+        return message == null ? clearFieldError(field.name) : setFieldError(field.name, message);
+      },
+    );
+  }
 </script>
 
 <style lang="scss">

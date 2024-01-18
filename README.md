@@ -31,6 +31,12 @@ If you've seen the comments from [@Rich-Harris](https://github.com/Rich-Harris) 
 
 Avoiding the `supertokens-node` middleware ended up being _required_ for me to use HTTPS in my application _and_ get it working with high security in Cloudflare. I'll spare you the details, but there are other edge cases like these where `supertokens-node` middleware just won't work (or won't work well). Thankfully, in `supertokens-node@14`, the SuperTokens team was kind enough to introduce functions that allow you to get authentication working _without_ using their custom middleware. If you're using any kind of SSR framework that leverages progressive enhancement ([SvelteKit](https://kit.svelte.dev/), [Remix](https://remix.run/), [SolidStart](https://start.solidjs.com/), etc.), then you'll want to leverage these functions instead of using the middleware as well.
 
+### Why Are You Using JSDocs Instead of TypeScript in Some Svelte Files?
+
+Unfortunately, unlike Vue, [Svelte does not support TypeScript type annotations in its markup](https://github.com/sveltejs/eslint-plugin-svelte/issues/255) (at the time of this writing). This is due to a [limitation](https://github.com/sveltejs/svelte/issues/4701) in how Svelte files are processed. However, you _can_ use types in Svelte's markup _if you use JSDocs_ (because JSDocs don't have to be processed by Svelte). Consequently, we use JSDocs in the Svelte files where we deemed in-markup TS types to make the code more readable.
+
+You're free to change these files to use TypeScript if you like. However, you'll need to move all code requiring TS type annotations into the `<script>` section of your Svelte files.
+
 ## Security Insights
 
 Although the middleware-free approach gives us many advantages when it comes to using SuperTokens with SSR frameworks, it also gives us a little more responsibility. You'll notice in this app that we have to be intentional about the settings which we use for our HTTP cookies. You don't necessarily need to use the settings that I have (though you _should_ use `HttpOnly` and you _should_ set a strict `Path`), but you should certainly ensure that your settings are the safest that they can be for your application. Here are some resources that may be helpful for you on the matter:
@@ -52,9 +58,10 @@ Bear in mind that if you're using a framework that (sufficiently) protects again
 
 I hope you find this useful! Let me know your thoughts here on GitHub or on their [Discord](https://supertokens.com/discord). :&rpar; If there are any ways that I can improve anything here, feel free to say so.
 
-**(Original `Svelte Kit` README is below.)**
-
----
+<details>
+  <summary>
+    <b>Original <code>Svelte Kit</code> README</b>
+  </summary>
 
 # create-svelte
 
@@ -94,3 +101,5 @@ npm run build
 You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+
+</details>

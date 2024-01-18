@@ -13,6 +13,7 @@
     "format": "prettier --ignore-path .gitignore --write ."
   },
   "dependencies": {
+    "@form-observer/svelte": "^0.7.0",
     "supertokens-node": "^16.7.1"
   },
   "devDependencies": {
