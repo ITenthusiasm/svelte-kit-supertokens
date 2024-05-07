@@ -48,7 +48,7 @@
           required,
           validate(input) {
             const password = /** @type {HTMLInputElement} */ (input.form?.elements.namedItem("password"));
-            if (input.value !== password?.value) return "Confirmation Password doesn't match";
+            if (input.value !== password?.value) return "Confirmation password doesn't match";
           },
         })}
       />

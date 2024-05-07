@@ -50,12 +50,12 @@ export const actions: Actions = {
 
       // Validate Data
       const errors: ActionData = {};
-      if (!password) errors.password = "Password is required";
+      if (!password) errors.password = "New password is required";
       else if (!validatePassword(password)) {
         errors.password = "Password must contain at least 8 characters, including a number";
       }
 
-      if (!confirmPassword) errors["confirm-password"] = "Confirmation Password is required";
+      if (!confirmPassword) errors["confirm-password"] = "Confirm password is required";
       else if (password !== confirmPassword) errors["confirm-password"] = "Confirmation password doesn't match";
 
       if (errors.password || errors["confirm-password"]) return fail(400, { errors });
