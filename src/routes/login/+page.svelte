@@ -1,5 +1,5 @@
 <main>
-  <form method="POST" use:enhance use:autoObserve>
+  <form method="POST" use:enhance={submitFunction} use:autoObserve>
     <h1>{`Sign ${data.mode === "signin" ? "In" : "Up"}`}</h1>
 
     <h2>
@@ -80,13 +80,16 @@
   /** @param {HTMLInputElement} field */
   const required = (field) => `${field.labels?.[0].textContent} is required`;
 
-  const { autoObserve, configure } = createFormValidityObserver("focusout", {
+  const { autoObserve, configure, validateFields } = createFormValidityObserver("focusout", {
     renderByDefault: true,
     renderer(errorContainer, errorMessage) {
       const fieldName = /** @type {keyof typeof errors} */ (errorContainer.id.replace(/-error$/, ""));
       errors[fieldName] = errorMessage;
     },
   });
+
+  /** @type {import("./$types.d.ts").SubmitFunction} */
+  const submitFunction = async ({ cancel }) => ((await validateFields()) ? undefined : cancel());
 </script>
 
 <style lang="scss">

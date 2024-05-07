@@ -8,7 +8,7 @@
   </main>
 {:else if data.mode === "attempt"}
   <main>
-    <form method="post" use:enhance use:autoObserve on:submit={handleSubmit}>
+    <form method="post" use:enhance={submitFunction} use:autoObserve>
       <h1>Change your password</h1>
       <h2>Enter a new password below to change your password</h2>
       {#if errors.banner}<div role="alert">{errors.banner}</div>{/if}
@@ -67,7 +67,7 @@
   </main>
 {:else}
   <main>
-    <form method="post" use:enhance use:autoObserve on:submit={handleSubmit}>
+    <form method="post" use:enhance={submitFunction} use:autoObserve>
       <h1>Reset your password</h1>
       <h2>We will send you an email to reset your password</h2>
       {#if errors.banner}<div role="alert">{errors.banner}</div>{/if}
@@ -111,6 +111,6 @@
   /** @param {HTMLInputElement} field */
   const required = (field) => `${field.labels?.[0].textContent} is required`;
 
-  /** @param {SubmitEvent} event */
-  const handleSubmit = (event) => (validateFields() ? undefined : event.preventDefault());
+  /** @type {import("./$types.d.ts").SubmitFunction} */
+  const submitFunction = ({ cancel }) => (validateFields() ? undefined : cancel());
 </script>
