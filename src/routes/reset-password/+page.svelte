@@ -112,5 +112,5 @@
   const required = (field) => `${field.labels?.[0].textContent} is required`;
 
   /** @type {import("./$types.d.ts").SubmitFunction} */
-  const submitFunction = ({ cancel }) => (validateFields() ? undefined : cancel());
+  const submitFunction = ({ cancel }) => (validateFields({ focus: true }) ? undefined : cancel());
 </script>

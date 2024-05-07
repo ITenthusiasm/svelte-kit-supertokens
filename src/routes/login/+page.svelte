@@ -89,7 +89,7 @@
   });
 
   /** @type {import("./$types.d.ts").SubmitFunction} */
-  const submitFunction = async ({ cancel }) => ((await validateFields()) ? undefined : cancel());
+  const submitFunction = async ({ cancel }) => ((await validateFields({ focus: true })) ? undefined : cancel());
 </script>
 
 <style lang="scss">
