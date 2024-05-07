@@ -1,5 +1,5 @@
 <main>
-  <form method="POST" bind:this={formElement} use:enhance use:autoObserve>
+  <form method="POST" use:enhance use:autoObserve>
     <h1>{`Sign ${data.mode === "signin" ? "In" : "Up"}`}</h1>
 
     <h2>
@@ -11,17 +11,14 @@
     </h2>
 
     <hr />
-
-    {#if form?.errors.banner}
-      <div role="alert">{form.errors.banner}</div>
-    {/if}
+    {#if errors.banner}<div role="alert">{errors.banner}</div>{/if}
 
     <label for="email">Email</label>
     <input
       id="email"
       name="email"
       placeholder="Email Address"
-      aria-invalid={!!form?.errors.email}
+      aria-invalid={!!errors.email}
       aria-describedby="email-error"
       {...configure("email", {
         required,
@@ -36,7 +33,7 @@
         },
       })}
     />
-    <div id="email-error" role="alert">{form?.errors.email ?? ""}</div>
+    <div id="email-error" role="alert">{errors.email ?? ""}</div>
 
     <label for="password">Password</label>
     <input
@@ -44,7 +41,7 @@
       name="password"
       placeholder="Password"
       type="password"
-      aria-invalid={!!form?.errors.password}
+      aria-invalid={!!errors.password}
       aria-describedby="password-error"
       {...configure("password", {
         required,
@@ -57,7 +54,7 @@
               },
       })}
     />
-    <div id="password-error" role="alert">{form?.errors.password ?? ""}</div>
+    <div id="password-error" role="alert">{errors.password ?? ""}</div>
 
     <input name="mode" type="hidden" value={data.mode} />
     <button type="submit">{`Sign ${data.mode === "signin" ? "In" : "Up"}`}</button>
@@ -76,23 +73,20 @@
 
   /** @type {import("./$types.d.ts").PageData} */ export let data;
   /** @type {import("./$types.d.ts").ActionData} */ export let form;
-  /** @type {HTMLFormElement} */ let formElement;
+  /** @type {NonNullable<typeof form>["errors"]} */ let errors;
+  $: errors = form?.errors ?? {};
 
   // Manage form errors.
-  const { autoObserve, configure, setFieldError, clearFieldError } = createFormValidityObserver("focusout");
-
   /** @param {HTMLInputElement} field */
   const required = (field) => `${field.labels?.[0].textContent} is required`;
 
-  $: if (formElement) {
-    Array.prototype.forEach.call(
-      formElement.elements,
-      /** @param {HTMLInputElement} field */ (field) => {
-        const message = form?.errors?.[/** @type {keyof typeof form.errors} */ (field.name)];
-        return message == null ? clearFieldError(field.name) : setFieldError(field.name, message);
-      },
-    );
-  }
+  const { autoObserve, configure } = createFormValidityObserver("focusout", {
+    renderByDefault: true,
+    renderer(errorContainer, errorMessage) {
+      const fieldName = /** @type {keyof typeof errors} */ (errorContainer.id.replace(/-error$/, ""));
+      errors[fieldName] = errorMessage;
+    },
+  });
 </script>
 
 <style lang="scss">

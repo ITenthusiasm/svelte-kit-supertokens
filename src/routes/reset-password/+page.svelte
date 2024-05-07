@@ -8,10 +8,10 @@
   </main>
 {:else if data.mode === "attempt"}
   <main>
-    <form method="post" bind:this={formElement} use:enhance use:autoObserve on:submit={handleSubmit}>
+    <form method="post" use:enhance use:autoObserve on:submit={handleSubmit}>
       <h1>Change your password</h1>
       <h2>Enter a new password below to change your password</h2>
-      {#if form?.errors?.banner}<div role="alert">{form?.errors.banner}</div>{/if}
+      {#if errors.banner}<div role="alert">{errors.banner}</div>{/if}
 
       <label for="password">New password</label>
       <input
@@ -19,7 +19,7 @@
         name="password"
         type="password"
         placeholder="New password"
-        aria-invalid={!!form?.errors?.password}
+        aria-invalid={!!errors.password}
         aria-describedby="password-error"
         {...configure("password", {
           required,
@@ -34,7 +34,7 @@
           },
         })}
       />
-      <div id="password-error" role="alert">{form?.errors?.password ?? ""}</div>
+      <div id="password-error" role="alert">{errors.password ?? ""}</div>
 
       <label for="confirm-password">Confirm password</label>
       <input
@@ -42,7 +42,7 @@
         name="confirm-password"
         type="password"
         placeholder="Confirm your password"
-        aria-invalid={!!form?.errors?.["confirm-password"]}
+        aria-invalid={!!errors["confirm-password"]}
         aria-describedby="confirm-password-error"
         {...configure("confirm-password", {
           required,
@@ -52,7 +52,7 @@
           },
         })}
       />
-      <div id="confirm-password-error" role="alert">{form?.errors?.["confirm-password"] ?? ""}</div>
+      <div id="confirm-password-error" role="alert">{errors["confirm-password"] ?? ""}</div>
 
       <input name="mode" type="hidden" value={data.mode} />
       {#if !!data.token}<input name="token" type="hidden" value={data.token} />{/if}
@@ -67,20 +67,20 @@
   </main>
 {:else}
   <main>
-    <form method="post" bind:this={formElement} use:enhance use:autoObserve on:submit={handleSubmit}>
+    <form method="post" use:enhance use:autoObserve on:submit={handleSubmit}>
       <h1>Reset your password</h1>
       <h2>We will send you an email to reset your password</h2>
-      {#if form?.errors?.banner}<div role="alert">{form?.errors.banner}</div>{/if}
+      {#if errors.banner}<div role="alert">{errors.banner}</div>{/if}
 
       <label for="email">Email</label>
       <input
         id="email"
         name="email"
-        aria-invalid={!!form?.errors?.email}
+        aria-invalid={!!errors.email}
         aria-describedby="email-error"
         {...configure("email", { required, type: { value: "email", message: "Email is invalid" } })}
       />
-      <div id="email-error" role="alert">{form?.errors.email ?? ""}</div>
+      <div id="email-error" role="alert">{errors.email ?? ""}</div>
 
       <input name="mode" type="hidden" value={data.mode} />
       <button type="submit">Email me</button>
@@ -96,25 +96,21 @@
 
   /** @type {import("./$types.d.ts").PageData} */ export let data;
   /** @type {import("./$types.d.ts").ActionData} */ export let form;
-  /** @type {HTMLFormElement} */ let formElement;
+  /** @type {NonNullable<typeof form>["errors"]} */ let errors;
+  $: errors = form?.errors ?? {};
 
   // Manage form errors.
-  const { autoObserve, configure, setFieldError, clearFieldError, validateField, validateFields } =
-    createFormValidityObserver("focusout");
+  const { autoObserve, configure, validateField, validateFields } = createFormValidityObserver("focusout", {
+    renderByDefault: true,
+    renderer(errorContainer, errorMessage) {
+      const fieldName = /** @type {keyof typeof errors} */ (errorContainer.id.replace(/-error$/, ""));
+      errors[fieldName] = errorMessage;
+    },
+  });
 
   /** @param {HTMLInputElement} field */
   const required = (field) => `${field.labels?.[0].textContent} is required`;
 
   /** @param {SubmitEvent} event */
   const handleSubmit = (event) => (validateFields() ? undefined : event.preventDefault());
-
-  $: if (formElement) {
-    Array.prototype.forEach.call(
-      formElement.elements,
-      /** @param {HTMLInputElement} field */ (field) => {
-        const message = form?.errors?.[/** @type {keyof typeof form.errors} */ (field.name)];
-        return message == null ? clearFieldError(field.name) : setFieldError(field.name, message);
-      },
-    );
-  }
 </script>
