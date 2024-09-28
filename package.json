@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@form-observer/svelte": "^0.9.1",
-    "supertokens-node": "^16.7.6"
+    "supertokens-node": "^20.1.2"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^3.2.5",
