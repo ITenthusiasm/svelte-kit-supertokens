@@ -14,24 +14,24 @@
   },
   "dependencies": {
     "@form-observer/svelte": "^0.9.1",
-    "supertokens-node": "^16.7.5"
+    "supertokens-node": "^16.7.6"
   },
   "devDependencies": {
-    "@sveltejs/adapter-auto": "^3.2.0",
-    "@sveltejs/kit": "^2.5.7",
-    "@sveltejs/vite-plugin-svelte": "^3.1.0",
-    "@typescript-eslint/eslint-plugin": "^7.8.0",
-    "@typescript-eslint/parser": "^7.8.0",
-    "eslint": "^8.57.0",
+    "@sveltejs/adapter-auto": "^3.2.5",
+    "@sveltejs/kit": "^2.6.1",
+    "@sveltejs/vite-plugin-svelte": "^3.1.2",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-svelte": "^2.38.0",
-    "prettier": "^3.2.5",
-    "prettier-plugin-svelte": "^3.2.3",
-    "sass": "^1.76.0",
-    "svelte": "^4.2.15",
-    "svelte-check": "^3.7.1",
-    "tslib": "^2.6.2",
-    "typescript": "^5.4.5",
-    "vite": "^5.2.11"
+    "eslint-plugin-svelte": "^2.44.1",
+    "prettier": "^3.3.3",
+    "prettier-plugin-svelte": "^3.2.7",
+    "sass": "^1.79.4",
+    "svelte": "^4.2.19",
+    "svelte-check": "^3.8.6",
+    "tslib": "^2.7.0",
+    "typescript": "^5.6.2",
+    "vite": "^5.4.8"
   }
 }
