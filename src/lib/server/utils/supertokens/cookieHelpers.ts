@@ -1,4 +1,5 @@
 import type { SessionContainerInterface } from "supertokens-node/lib/build/recipe/session/types";
+import type Passwordless from "supertokens-node/recipe/passwordless";
 import type { CookieSerializeOptions } from "cookie"; // `cookie` is an internal dependency of `SvelteKit`
 import { serialize } from "cookie";
 import { env } from "$env/dynamic/private";
@@ -11,9 +12,17 @@ export type Tokens = Pick<
   "accessToken" | "refreshToken" | "antiCsrfToken"
 >;
 
+export type CodeDetails = Pick<
+  Awaited<ReturnType<Passwordless.RecipeInterface["createCode"]>>,
+  "deviceId" | "preAuthSessionId"
+>;
+
 /** The `name`s of the `SuperTokens` cookies used throughout the application */
 export const authCookieNames = Object.freeze({ access: "sAccessToken", refresh: "sRefreshToken", csrf: "sAntiCsrf" });
 const oneYearInMilliseconds = 365 * 24 * 60 * 60 * 1000;
+
+/** The `name`s of the cookies used to store `SuperTokens`'s Passwordless data for a given device */
+export const deviceCookieNames = Object.freeze({ deviceId: "sDeviceId", preAuthSessionId: "sPreAuthSessionId" });
 
 const commonCookieSettings = Object.freeze({
   httpOnly: true,
@@ -38,7 +47,7 @@ export function createCookieSettings(type?: keyof typeof authCookieNames): Cooki
   return { expires: nextYear, path: type === "refresh" ? commonRoutes.refreshSession : "/", ...commonCookieSettings };
 }
 
-const deleteCookieSettings = Object.freeze({ expires: new Date(0), path: "/" } as const satisfies CookieSettings);
+export const deleteCookieSettings = Object.freeze({ expires: new Date(0), path: "/" }) satisfies CookieSettings;
 const deleteRefreshSettings = Object.freeze({ ...deleteCookieSettings, path: commonRoutes.refreshSession });
 
 /**

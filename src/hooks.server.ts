@@ -2,6 +2,7 @@ import type { Handle } from "@sveltejs/kit";
 import SuperTokens from "supertokens-node";
 import Session from "supertokens-node/recipe/session";
 import EmailPassword from "supertokens-node/recipe/emailpassword";
+import Passwordless from "supertokens-node/recipe/passwordless";
 import { env } from "$env/dynamic/private";
 import { authCookieNames, createHeadersFromTokens } from "$lib/server/utils/supertokens/cookieHelpers";
 import { commonRoutes } from "$lib/utils/constants";
@@ -19,13 +20,22 @@ SuperTokens.init({
     apiBasePath: env.SUPERTOKENS_API_BASE_PATH as string,
   },
   recipeList: [
+    // Initializes passwordless features
+    Passwordless.init({ contactMethod: "EMAIL_OR_PHONE", flowType: "USER_INPUT_CODE_AND_MAGIC_LINK" }),
+
     EmailPassword.init(), // Initializes signin / signup features
     Session.init(), // Initializes session features
   ],
 });
 
 /* -------------------- Svelte Kit -------------------- */
-const publicPages = ["/", commonRoutes.login, commonRoutes.resetPassword, commonRoutes.emailExists] as const;
+const publicPages = [
+  "/",
+  commonRoutes.login,
+  commonRoutes.resetPassword,
+  commonRoutes.emailExists,
+  commonRoutes.loginPasswordless,
+] as const;
 
 export const handle = (async ({ event, resolve }) => {
   try {
