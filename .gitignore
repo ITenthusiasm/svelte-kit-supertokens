@@ -4,6 +4,10 @@
 /.svelte-kit
 /package
 
+# Playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
 
 # -------------------- NPM (via GitHub) --------------------
 # Logs
