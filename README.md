@@ -27,8 +27,8 @@ If you have more specific questions about how the `Passwordless` recipe works, y
 
 ### What Code Do I Actually _Need_?
 
-- If you're using the `EmailPassword` recipe, then you _don't_ need the `passwordless.login.tsx` page (or its dependencies).
-- If you're using the `Passwordless` recipe, then you _don't_ need to worry about the `login.tsx` and `reset-password.tsx` pages (or their dependencies).
+- If you're using the `EmailPassword` recipe, then you _don't_ need the `passwordless/login/` page (or its dependencies).
+- If you're using the `Passwordless` recipe, then you _don't_ need to worry about the `login/` and `reset-password/` pages (or their dependencies).
 
 Obviously, you can decide how much you care about the (S)CSS files. Besides that, the rest of the code in the codebase should be relevant for you. The (very few) parts that aren't should be obvious.
 
