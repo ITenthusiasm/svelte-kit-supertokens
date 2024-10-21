@@ -66,7 +66,7 @@ export const actions: Actions = {
       const code = await SuperTokensHelpers.sendPasswordlessInvite({ email, phoneNumber, flow });
 
       // Redirect to relevant page (with Device Details), preserving `returnUrl` if it previously existed
-      const cookieSettings = createCookieSettings();
+      const cookieSettings = createCookieSettings("device");
       event.cookies.set(deviceCookieNames.deviceId, code.deviceId, cookieSettings);
       event.cookies.set(deviceCookieNames.preAuthSessionId, code.preAuthSessionId, cookieSettings);
 

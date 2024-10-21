@@ -37,14 +37,19 @@ const commonCookieSettings = Object.freeze({
  *
  * @param type The type of cookie for which the settings are being generated
  */
-export function createCookieSettings(type?: keyof typeof authCookieNames): CookieSettings {
+export function createCookieSettings(type?: keyof typeof authCookieNames | "device" | "pkce"): CookieSettings {
   const nextYear = new Date(new Date().getTime() + oneYearInMilliseconds);
+
+  let path = "/";
+  if (type === "refresh") path = commonRoutes.refreshSession;
+  else if (type === "device") path = commonRoutes.loginPasswordless;
+  else if (type === "pkce") path = commonRoutes.loginThirdParty;
 
   /*
    * Note: SuperTokens is responsible for enforcing the expiration dates, not the browser. Just make sure
    * that the cookie lives long enough in the browser for SuperTokens to be able to receive it and validate it.
    */
-  return { expires: nextYear, path: type === "refresh" ? commonRoutes.refreshSession : "/", ...commonCookieSettings };
+  return { expires: nextYear, path, ...commonCookieSettings };
 }
 
 export const deleteCookieSettings = Object.freeze({ expires: new Date(0), path: "/" }) satisfies CookieSettings;

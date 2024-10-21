@@ -3,6 +3,7 @@ import SuperTokens from "supertokens-node";
 import Session from "supertokens-node/recipe/session";
 import EmailPassword from "supertokens-node/recipe/emailpassword";
 import Passwordless from "supertokens-node/recipe/passwordless";
+import ThirdParty from "supertokens-node/recipe/thirdparty";
 import { env } from "$env/dynamic/private";
 import { authCookieNames, createHeadersFromTokens } from "$lib/server/utils/supertokens/cookieHelpers";
 import { commonRoutes } from "$lib/utils/constants";
@@ -25,6 +26,58 @@ SuperTokens.init({
 
     EmailPassword.init(), // Initializes signin / signup features
     Session.init(), // Initializes session features
+
+    // Initializes ThirdParty auth features
+    ThirdParty.init({
+      signInAndUpFeature: {
+        providers: [
+          // Built-in Providers
+          {
+            config: {
+              thirdPartyId: "github",
+              requireEmail: true,
+              clients: [
+                {
+                  clientId: env.GITHUB_OAUTH_CLIENT_ID as string,
+                  clientSecret: env.GITHUB_OAUTH_CLIENT_SECRET,
+                  scope: ["user:email"],
+                },
+              ],
+            },
+          },
+          // Custom Providers
+          {
+            config: {
+              thirdPartyId: "planningcenter",
+              requireEmail: true,
+              authorizationEndpoint: "https://api.planningcenteronline.com/oauth/authorize",
+              tokenEndpoint: "https://api.planningcenteronline.com/oauth/token",
+              userInfoEndpoint: "https://api.planningcenteronline.com/people/v2/me/emails?where[primary]=true",
+              userInfoMap: {
+                fromUserInfoAPI: {
+                  userId: "data.0.relationships.person.data.id",
+                  email: "data.0.attributes.address",
+                  emailVerified: "data.0.attributes.primary", // Weak, but the best thing that we can work with
+                },
+                // See: https://github.com/supertokens/supertokens-node/issues/954
+                fromIdTokenPayload: {
+                  userId: undefined,
+                  email: undefined,
+                  emailVerified: undefined,
+                },
+              },
+              clients: [
+                {
+                  clientId: env.PLANNING_CENTER_OAUTH_CLIENT_ID as string,
+                  clientSecret: env.PLANNING_CENTER_OAUTH_CLIENT_SECRET,
+                  scope: ["people"],
+                },
+              ],
+            },
+          },
+        ],
+      },
+    }),
   ],
 });
 
@@ -35,6 +88,7 @@ const publicPages = [
   commonRoutes.resetPassword,
   commonRoutes.emailExists,
   commonRoutes.loginPasswordless,
+  commonRoutes.loginThirdParty,
 ] as const;
 
 export const handle = (async ({ event, resolve }) => {

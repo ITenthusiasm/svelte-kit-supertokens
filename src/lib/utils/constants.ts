@@ -5,6 +5,7 @@ export const commonRoutes = {
   refreshSession: "/auth/session/refresh",
   emailExists: "/api/email-exists",
   loginPasswordless: "/passwordless/login",
+  loginThirdParty: "/thirdparty/login",
 } as const;
 
 /** Page routes related to authentication. */
@@ -14,4 +15,5 @@ export const authPages: string[] = [
   commonRoutes.refreshSession,
   commonRoutes.emailExists,
   commonRoutes.loginPasswordless,
+  commonRoutes.loginThirdParty,
 ];
