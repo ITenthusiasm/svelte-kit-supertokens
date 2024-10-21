@@ -87,7 +87,8 @@ export const actions: Actions = {
   },
 };
 
-// TODO: SuperTokens seems to `THROW` an error when there's a bad `preAuthSessionId`. What should we do about that?
+// TODO: SuperTokens seems to `THROW` an error when there's a bad `preAuthSessionId`. This issue has been
+// reported to the SuperTokens team and is unexpected behavior. We'll need to wait for them to supply a fix.
 async function attemptSigninWith(event: Pick<RequestEvent, "url" | "cookies">, code: string, link?: boolean) {
   // Get Credentials
   const deviceId = event.cookies.get(deviceCookieNames.deviceId) as string;
