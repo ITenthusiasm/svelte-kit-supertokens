@@ -48,7 +48,6 @@ type ThirdPartySignInResult =
 type TokensForLogout = Pick<Tokens, "accessToken" | "antiCsrfToken">;
 type TokensForRefresh = { refreshToken: string; antiCsrfToken?: string };
 type ResetPasswordStatus = Awaited<ReturnType<(typeof EmailPassword)["resetPasswordUsingToken"]>>["status"];
-const recipeId = "emailpassword"; // TODO: Use this value directly where it's needed
 const tenantId = "public"; // Default tenantId for `SuperTokens`
 
 const SuperTokensHelpers = {
@@ -107,7 +106,7 @@ const SuperTokensHelpers = {
     }
 
     const passwordResetPath = commonRoutes.resetPassword;
-    const passwordResetLink = `${env.DOMAIN}${passwordResetPath}?token=${tokenResult.token}&rid=${recipeId}`;
+    const passwordResetLink = `${env.DOMAIN}${passwordResetPath}?token=${tokenResult.token}&rid=emailpassword`;
     return EmailPassword.sendEmail({
       type: "PASSWORD_RESET",
       tenantId,
