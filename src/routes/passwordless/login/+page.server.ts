@@ -10,6 +10,7 @@ import {
   deleteCookieSettings,
 } from "$lib/server/utils/supertokens/cookieHelpers";
 import { validateEmail, validatePhone } from "$lib/utils/validation";
+import { commonRoutes } from "$lib/utils/constants";
 
 export const load = (async (event) => {
   if (event.locals.user?.id) throw redirect(303, "/");
@@ -89,6 +90,7 @@ export const actions: Actions = {
 
 // TODO: SuperTokens seems to `THROW` an error when there's a bad `preAuthSessionId`. This issue has been
 // reported to the SuperTokens team and is unexpected behavior. We'll need to wait for them to supply a fix.
+const deleteDeviceCookieSettings = { ...deleteCookieSettings, path: commonRoutes.loginPasswordless };
 async function attemptSigninWith(event: Pick<RequestEvent, "url" | "cookies">, code: string, link?: boolean) {
   // Get Credentials
   const deviceId = event.cookies.get(deviceCookieNames.deviceId) as string;
@@ -112,7 +114,7 @@ async function attemptSigninWith(event: Pick<RequestEvent, "url" | "cookies">, c
   const refreshCookieSettings = createCookieSettings("refresh");
   event.cookies.set(authCookieNames.refresh, tokens.refreshToken as string, refreshCookieSettings);
 
-  event.cookies.delete(deviceCookieNames.deviceId, deleteCookieSettings);
-  event.cookies.delete(deviceCookieNames.preAuthSessionId, deleteCookieSettings);
+  event.cookies.delete(deviceCookieNames.deviceId, deleteDeviceCookieSettings);
+  event.cookies.delete(deviceCookieNames.preAuthSessionId, deleteDeviceCookieSettings);
   throw redirect(303, event.url.searchParams.get("returnUrl") || "/");
 }

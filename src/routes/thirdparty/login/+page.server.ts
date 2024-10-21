@@ -6,8 +6,10 @@ import {
   createCookieSettings,
   deleteCookieSettings,
 } from "$lib/server/utils/supertokens/cookieHelpers";
+import { commonRoutes } from "$lib/utils/constants";
 
 const pkceCookieName = "sPKCE";
+const deletePkceCookieSettings = { ...deleteCookieSettings, path: commonRoutes.loginThirdParty };
 type Errors = Partial<{ banner: string }>;
 
 export const load = (async (event) => {
@@ -39,7 +41,7 @@ export const load = (async (event) => {
   event.cookies.set(authCookieNames.refresh, tokens.refreshToken as string, refreshCookieSettings);
   if (tokens.antiCsrfToken) event.cookies.set(authCookieNames.csrf, tokens.antiCsrfToken, cookieSettings);
 
-  event.cookies.delete(pkceCookieName, deleteCookieSettings);
+  event.cookies.delete(pkceCookieName, deletePkceCookieSettings);
   throw redirect(303, searchParams.get("returnUrl") || "/");
 }) satisfies PageServerLoad;
 
