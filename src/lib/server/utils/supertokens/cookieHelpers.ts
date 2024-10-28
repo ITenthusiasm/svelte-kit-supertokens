@@ -17,7 +17,7 @@ export type CodeDetails = Pick<
   "deviceId" | "preAuthSessionId"
 >;
 
-/** The `name`s of the `SuperTokens` cookies used throughout the application */
+/** The `name`s of the `SuperTokens` auth cookies used throughout the application */
 export const authCookieNames = Object.freeze({ access: "sAccessToken", refresh: "sRefreshToken", csrf: "sAntiCsrf" });
 const oneYearInMilliseconds = 365 * 24 * 60 * 60 * 1000;
 
