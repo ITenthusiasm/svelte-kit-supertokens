@@ -163,8 +163,6 @@ const SuperTokensHelpers = {
     if (!provider) return null;
 
     const { urlWithQueryParams, pkceCodeVerifier } = await provider.getAuthorisationRedirectURL({
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- See: supertokens/supertokens-node#946
-      userContext: undefined as any,
       redirectURIOnProviderDashboard: createReturnURLForProvider(providerId, returnUrl),
     });
 
@@ -181,8 +179,6 @@ const SuperTokensHelpers = {
     if (!provider) return { status: "UNRECOGNIZED_PROVIDER" } as const;
 
     const oAuthTokens = await provider.exchangeAuthCodeForOAuthTokens({
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- See: supertokens/supertokens-node#946
-      userContext: undefined as any,
       redirectURIInfo: {
         pkceCodeVerifier,
         redirectURIQueryParams: Object.fromEntries(providerCredentials),
@@ -190,8 +186,7 @@ const SuperTokensHelpers = {
       },
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- See: supertokens/supertokens-node#946
-    const userInfoFromProvider = await provider.getUserInfo({ oAuthTokens, userContext: undefined as any });
+    const userInfoFromProvider = await provider.getUserInfo({ oAuthTokens });
     const { thirdPartyUserId, email } = userInfoFromProvider;
     if (!email) return { status: "NO_EMAIL_FOUND_FOR_USER" } as const;
     if (!email.isVerified) return { status: "EMAIL_NOT_VERIFIED" } as const;

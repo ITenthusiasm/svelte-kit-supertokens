@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@form-observer/svelte": "^0.9.1",
-    "supertokens-node": "^20.1.5"
+    "supertokens-node": "^21.0.0"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.1.0",
