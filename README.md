@@ -1,6 +1,6 @@
 # Svelte Kit SuperTokens
 
-Hello! This is my attempt at providing an example of how to use [`Svelte Kit`](https://kit.svelte.dev/) (an amazing tool for building SSR web applications in Svelte) with [`SuperTokens`](https://supertokens.com/) (an open source alternative to user authentication). Note that this repository uses the `EmailPassword`/`Passwordless` recipes/approaches from `SuperTokens` for its examples. However, the code here should be easily transferrable to the other authentication repices/methods that `SuperTokens` provides.
+Hello! This is my attempt at providing an example of how to use [`Svelte Kit`](https://kit.svelte.dev/) (an amazing tool for building SSR web applications in Svelte) with [`SuperTokens`](https://supertokens.com/) (an open source alternative to user authentication). Note that this repository uses the `EmailPassword`/`Passwordless`/`ThirdParty` recipes/approaches from `SuperTokens` for its examples. However, the code here should be easily transferrable to the other authentication repices/methods that `SuperTokens` provides.
 
 The solution here is based on my work done in the [Remix version](https://github.com/ITenthusiasm/remix-supertokens) of this app, but it has been modified to be more accustomed to Svelte Kit. Note that this application takes an SSR-only approach for three reasons: 1&rpar; Better security (big plus), 2&rpar; Guaranteed [progressive enhancement](https://learn.svelte.dev/tutorial/progressive-enhancement) (also a big plus), and 3&rpar; Easier code management (arguably).
 
@@ -16,6 +16,8 @@ Start the dev server by running `npm run dev`. **Remember to add your own `.env`
 - `SUPERTOKENS_WEBSITE_DOMAIN` (e.g., `http://localhost:5173`)
 - `SUPERTOKENS_API_DOMAIN` (e.g., `http://localhost:5173`)
 - `SUPERTOKENS_API_BASE_PATH` (e.g., `/auth`)
+
+Note that you will need to configure additional environment variables for testing the `ThirdParty` login feature. (See the usage of `SuperTokens.init()` in this project.)
 
 ### Using Other Authentication Methods
 
@@ -120,11 +122,11 @@ Unlike [Remix](https://remix.run/), SvelteKit behaves unusually when a form leve
 
 Depending too much on `supertokens-website` or `supertokens-web-js` will result in an application that cannot run without JavaScript. And an application that can't run without JavaScript is actually [inaccessible to a lot of users](https://www.kryogenix.org/code/browser/everyonehasjs.html). Consequently, we've pursued a solution that works _without_ these pacakages and _without_ JavaScript. (Don't worry! We still _enhance_ the app with JS to improve the user's experience whenever possible.) This means that our application will be accessible to the broadest range of users! :smile:
 
-As an added bonus, we decrease our JS bundle size when we avoid the use of `supertokens-website` and _especially_ `supertokens-web-js`.
+As an added bonus, we decrease our JS bundle size **_significantly_** when we avoid the use of `supertokens-website` and _especially_ `supertokens-web-js`.
 
 ### Why Aren't You Using the Middleware from `supertokens-node`?
 
-If you've seen the comments from [@Rich-Harris](https://github.com/Rich-Harris) (creator of Svelte) regarding server middleware (e.g., Express Middleware), then you'll know that solutions which require you to use middleware are often restricted and will prevent you from enhancing your application with other very important features. This is especially true if you're working with an SSR framework. Unfortunately, I have found Rich Harris's statements to be correct while working with my own Svelte Kit application. There are workarounds for these problem cases that allow people to still use middleware... but those aggressive workarounds often end up looking more ugly and complicated. (And thus, such approachs are more prone to error).
+If you've seen the comments from [@Rich-Harris](https://github.com/Rich-Harris) (creator of Svelte) regarding server middleware (e.g., Express Middleware), then you'll know that solutions which require you to use middleware are often restricted and will prevent you from enhancing your application with other very important features. This is especially true if you're working with an SSR framework. Unfortunately, I have found Rich Harris's statements to be correct while working with my own Svelte Kit application. There are workarounds for these problem cases that allow people to still use middleware... but those aggressive workarounds often end up looking more ugly and complicated. (And thus, such approaches are more prone to error).
 
 Avoiding the `supertokens-node` middleware ended up being _required_ for me to use HTTPS in my application _and_ get it working with high security in Cloudflare. I'll spare you the details, but there are other edge cases like these where `supertokens-node` middleware just won't work (or won't work well). Thankfully, in `supertokens-node@14`, the SuperTokens team was kind enough to introduce functions that allow you to get authentication working _without_ using their custom middleware. If you're using any kind of SSR framework that leverages progressive enhancement ([SvelteKit](https://kit.svelte.dev/), [Remix](https://remix.run/), [SolidStart](https://start.solidjs.com/), etc.), then you'll want to leverage these functions instead of using the middleware as well.
 
@@ -140,7 +142,7 @@ Absolutely! This project puts the different authentication methods on different 
 
 ## Security Insights
 
-Although the middleware-free approach gives us many advantages when it comes to using SuperTokens with SSR frameworks, it also gives us a little more responsibility. You'll notice in this app that we have to be intentional about the settings which we use for our HTTP cookies. You don't necessarily need to use the settings that I have (though you _should_ use `HttpOnly` and you _should_ set a strict `Path`), but you should certainly ensure that your settings are the safest that they can be for your application. Here are some resources that may be helpful for you on the matter:
+Although the middleware-free approach gives us many advantages when it comes to using SuperTokens with SSR frameworks, it also gives us a little more responsibility. You'll notice in this app that we have to be intentional about the settings which we use for our HTTP cookies. You don't necessarily need to use the settings in this project (though you _should_ use `HttpOnly` and you _should_ set a strict `Path`), but you should certainly ensure that your settings are the safest that they can be for your application. Here are some resources that may be helpful for you on the matter:
 
 - [How the `Set-Cookie` HTTP Header Works](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie)
 - [Docs for the `cookie` NPM package](https://www.npmjs.com/package/cookie) (Svelte Kit uses this under the hood to set the options for its cookies)
@@ -157,7 +159,7 @@ Bear in mind that if you're using a framework that (sufficiently) protects again
 
 ---
 
-I hope you find this useful! Let me know your thoughts here on GitHub or on their [Discord](https://supertokens.com/discord). :&rpar; If there are any ways that I can improve anything here, feel free to say so.
+I hope you find this useful! Let me know your thoughts here on GitHub or on the [SuperTokens Discord](https://supertokens.com/discord). :&rpar; If there are any ways that I can improve anything here, feel free to say so.
 
 <details>
   <summary>
